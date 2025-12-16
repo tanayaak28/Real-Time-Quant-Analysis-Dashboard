@@ -23,5 +23,4 @@ Pandas & NumPy (data processing)
 Statsmodels (statistical testing)
 Binance WebSocket API (live market data)
 
-# flow of the system
-![System Architecture](assets/real time quant analysis dashboard.png)
+
