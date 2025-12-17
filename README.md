@@ -14,6 +14,18 @@ This project is a real-time quantitative analytics dashboard that streams live c
 - Z-score threshold alerts for abnormal movements
 - Exportable analytics data in CSV format
 
+# System Flow
+
+<p align="center">
+  <img src="assets/real%20time%20quant%20analysis%20dashboard.png" 
+       alt="System Flow Diagram" 
+       width="800"/>
+</p>
+
+<p align="center">
+  <em>System flow illustrating real-time data movement from ingestion to analytics and dashboard visualization.</em>
+</p>
+
 # Tech Stack
 
 - Python
