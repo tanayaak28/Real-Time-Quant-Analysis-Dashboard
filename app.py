@@ -9,14 +9,10 @@ from alerts import check_zscore_alert
 
 st.set_page_config(layout="wide")
 
-# =====================
 # CONFIG
-# =====================
+
 SYMBOLS = ["BTCUSDT", "ETHUSDT"]
 
-# =====================
-# SESSION INIT
-# =====================
 if "ws" not in st.session_state:
     st.session_state.ws = BinanceWebSocket(SYMBOLS)
     st.session_state.ws.start()
@@ -24,9 +20,8 @@ if "ws" not in st.session_state:
 if "store" not in st.session_state:
     st.session_state.store = TickStore()
 
-# =====================
 # UI
-# =====================
+
 st.title("Real-Time Quant Analytics Dashboard")
 st.caption(f"Ticks collected: {len(st.session_state.store.df)}")
 
@@ -38,18 +33,16 @@ tf = col3.selectbox("Timeframe", ["1s", "1m", "5m"], index=1)
 window = st.slider("Rolling Window", 10, 100, 30)
 z_thresh = st.slider("Z-Score Alert Threshold", 1.0, 3.0, 2.0)
 
-# =====================
 # INGEST DATA
-# =====================
+
 ticks = list(st.session_state.ws.buffer)
 st.session_state.ws.buffer.clear()
 
 if ticks:
     st.session_state.store.update(ticks)
 
-# =====================
 # RESAMPLE
-# =====================
+
 df_x = st.session_state.store.resample(sym1, tf)
 df_y = st.session_state.store.resample(sym2, tf)
 
@@ -61,9 +54,8 @@ df = pd.concat([df_x["price"], df_y["price"]], axis=1)
 df.columns = ["x", "y"]
 df = df.dropna()
 
-# =====================
 # MIN DATA GUARD
-# =====================
+
 MIN_POINTS = max(window + 5, 50)
 
 if len(df) < MIN_POINTS:
@@ -74,24 +66,22 @@ if len(df) < MIN_POINTS:
     st.line_chart(df)
     st.stop()
 
-# =====================
 # ANALYTICS
-# =====================
+
 beta, spread, z = spread_and_zscore(df["x"], df["y"], window)
 corr = rolling_correlation(df["x"], df["y"], window)
 
-# =====================
 # PLOT 1 — PRICE
-# =====================
+
 st.subheader("Price Comparison")
 st.caption(
     "Displays the resampled price movement of both assets over time for relative trend comparison."
 )
 st.line_chart(df)
 
-# =====================
+
 # PLOT 2 — SPREAD + Z
-# =====================
+
 st.subheader("Spread & Z-Score")
 st.caption(
     "Shows the hedge-ratio adjusted spread and its standardized Z-score to identify divergence and mean-reversion signals."
@@ -102,16 +92,14 @@ fig_spread.add_trace(go.Scatter(y=spread, name="Spread"))
 fig_spread.add_trace(go.Scatter(y=z, name="Z-Score"))
 st.plotly_chart(fig_spread, use_container_width=True)
 
-# =====================
 # ALERT
-# =====================
+
 alert = check_zscore_alert(z.iloc[-1], z_thresh)
 if alert:
     st.error(alert)
 
-# =====================
 # PLOT 3 — ADF DIAGNOSTIC
-# =====================
+
 st.subheader("Stationarity Diagnostics (ADF)")
 st.caption(
     "Evaluates whether the spread is statistically stationary using the Augmented Dickey-Fuller test and visual diagnostics."
@@ -162,13 +150,13 @@ if len(clean_spread) >= 50:
 else:
     st.info("ADF diagnostics will appear once sufficient data is available.")
 
-# =====================
 # EXPORT
-# =====================
+
 st.download_button(
     "Download CSV",
     df.assign(spread=spread, zscore=z).to_csv().encode(),
     "analytics.csv"
 )
+
 
 
