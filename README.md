@@ -23,4 +23,6 @@ This project is a real-time quantitative analytics dashboard that streams live c
 - Statsmodels (statistical testing)
 - Binance WebSocket API (live market data)
 
+# AI Usage
 
+AI tools were used only as development assistance, primarily for code structuring, debugging support, documentation refinement, and architecture diagram generation. All analytical logic, statistical methods, and system design decisions were implemented and validated by the developer.
